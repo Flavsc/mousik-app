@@ -1,0 +1,35 @@
+@import "../../../styles/variables";
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: $navbar-height;
+  background-color: $color-black;
+  border-bottom: 2px solid $color-concrete;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 1000;
+}
+
+.logo {
+  font-family: $font-brutalist-display;
+  font-size: 2.5rem;
+  color: $color-white;
+}
+
+.links a {
+  margin-left: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+
+  &.active {
+    color: $color-red-accent;
+    border-bottom-color: $color-red-accent;
+  }
+}

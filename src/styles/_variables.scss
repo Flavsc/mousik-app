@@ -1,0 +1,17 @@
+// === PALETA DE CORES BRUTALISTA ===
+$color-concrete: #8a8a8a;
+$color-black: #1a1a1a;
+$color-white: #f0f0f0;
+$color-red-accent: #ff0000;
+
+// === TIPOGRAFIA ===
+// Use uma fonte de impacto. Vá em https://fonts.google.com/ e escolha uma.
+// Exemplo com "Anton":
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap");
+
+$font-primary: "Roboto", sans-serif;
+$font-brutalist-display: "Anton", sans-serif;
+
+// === LAYOUT ===
+$navbar-height: 70px;
+$footer-height: 100px;

@@ -1,0 +1,28 @@
+@import "../../../styles/variables";
+
+.footer {
+  width: 100%;
+  height: $footer-height;
+  padding: 0 2rem;
+  background-color: $color-black;
+  border-top: 2px solid $color-concrete;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: $font-brutalist-display;
+}
+
+.links a {
+  margin-right: 1.5rem;
+  color: $color-concrete;
+
+  &:hover {
+    color: $color-white;
+  }
+}
+
+.signature {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  color: $color-white;
+}

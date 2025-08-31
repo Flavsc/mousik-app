@@ -1,0 +1,41 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-primary;
+  background-color: $color-black;
+  color: $color-white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-brutalist-display;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+a {
+  color: $color-white;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: $color-red-accent;
+  }
+}
+
+main {
+  min-height: calc(100vh - #{$navbar-height} - #{$footer-height});
+  padding: 2rem;
+}
