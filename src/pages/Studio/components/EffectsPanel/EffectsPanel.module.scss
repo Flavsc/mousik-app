@@ -1,0 +1,21 @@
+// src/pages/Studio/components/EffectsPanel/EffectsPanel.module.scss
+@import '../../../../styles/variables';
+
+.effectsPanel {
+  background-color: darken($color-black, 2%);
+  border-left: 1px solid rgba($color-white, 0.2);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header h3 {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.effect {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba($color-white, 0.1);
+}

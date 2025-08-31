@@ -1,0 +1,27 @@
+// src/pages/Studio/components/Timeline/Timeline.module.scss
+@import '../../../../styles/variables';
+
+.timelineContainer {
+  width: 100%;
+  height: 100%;
+  background-color: $color-black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.waveform {
+  width: 100%;
+  height: 100%;
+
+  // Estilo para o texto de placeholder
+  p {
+    color: rgba($color-white, 0.2);
+    font-size: 1.2rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

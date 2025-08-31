@@ -1,41 +1,46 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import styles from "./Navbar.module.scss";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import styles from './Navbar.module.scss';
 
 const Navbar: React.FC = () => {
   return (
     <header className={styles.navbar}>
       <NavLink to="/" className={styles.logo}>
-        MOUSIK
+        MOUSIK_
       </NavLink>
-      <nav className={styles.links}>
+      <nav>
         <NavLink
           to="/"
-          className={({ isActive }) => (isActive ? styles.active : "")}
+          className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
+          data-text="Home"
         >
           Home
         </NavLink>
         <NavLink
           to="/studio"
-          className={({ isActive }) => (isActive ? styles.active : "")}
+          className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
+          data-text="Studio"
         >
           Studio
         </NavLink>
         <NavLink
           to="/gallery"
-          className={({ isActive }) => (isActive ? styles.active : "")}
+          className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
+          data-text="Galeria"
         >
           Galeria
         </NavLink>
-        <NavLink
+         <NavLink
           to="/about"
-          className={({ isActive }) => (isActive ? styles.active : "")}
+          className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
+          data-text="Sobre"
         >
           Sobre
         </NavLink>
-        <NavLink
+         <NavLink
           to="/account"
-          className={({ isActive }) => (isActive ? styles.active : "")}
+          className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
+          data-text="Conta"
         >
           Conta
         </NavLink>

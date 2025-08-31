@@ -1,17 +1,22 @@
-// === PALETA DE CORES BRUTALISTA ===
-$color-concrete: #8a8a8a;
-$color-black: #1a1a1a;
-$color-white: #f0f0f0;
-$color-red-accent: #ff0000;
+// === CONCEITO: PRENSA MONOCROMÁTICA (Monochrome Press) ===
+
+// === PALETA DE CORES ===
+// Alto contraste, inspirado em impressão e design editorial.
+$color-dark: #1b1b1b;
+$color-black: #101010;
+$color-white: #899c87;
+$color-accent: #f1fff3;
 
 // === TIPOGRAFIA ===
-// Use uma fonte de impacto. Vá em https://fonts.google.com/ e escolha uma.
-// Exemplo com "Anton":
-@import url("https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap");
-
-$font-primary: "Roboto", sans-serif;
-$font-brutalist-display: "Anton", sans-serif;
+// Usaremos uma única família de fontes versátil para todo o projeto.
+// 'Inter' é moderna, legível e possui muitos pesos.
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+$font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
 // === LAYOUT ===
-$navbar-height: 70px;
-$footer-height: 100px;
+$navbar-height: 80px;
+$footer-height: 60px;
+$main-padding: 3rem;
+
+// === ANIMAÇÃO ===
+$transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);

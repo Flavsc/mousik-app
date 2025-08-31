@@ -1,15 +1,20 @@
-import React from "react";
+import React from 'react';
+import styles from './Home.module.scss';
 
 const Home: React.FC = () => {
   return (
-    <div>
-      <h1>Manifesto Brutalista Sonoro</h1>
-      <p style={{ maxWidth: "600px", margin: "1rem 0", lineHeight: "1.6" }}>
-        MOUSIK não é apenas uma ferramenta. É uma declaração. Em um mundo de
-        interfaces polidas e perfeição digital, nós celebramos o caos, a
-        distorção e a beleza do imperfeito. Aqui, o som não é apenas ouvido; ele
-        é visto, quebrado e reconstruído como arte visual.
+    <div className={styles.container}>
+      <h1 className={styles.title}>
+        CAOS <br />
+        MUSICAL
+      </h1>
+      <p className={styles.subtitle}>
+        MOUSIK é uma plataforma web brutalista que transforma sons em arte visual complexa. Crie música diretamente no navegador enquanto um visualizador dinâmico reflete cada som e manipulação em tempo real.
       </p>
+
+      <div className={styles.decorativeText}>
+        // Plataforma de Experimentação Audiovisual
+      </div>
     </div>
   );
 };

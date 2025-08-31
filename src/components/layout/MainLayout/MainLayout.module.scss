@@ -1,0 +1,7 @@
+@import '../../../styles/variables';
+
+.noPadding {
+  padding: 0 !important;
+  padding-top: $navbar-height !important;
+  padding-bottom: $footer-height !important;
+}

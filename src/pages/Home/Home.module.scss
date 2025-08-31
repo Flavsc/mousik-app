@@ -1,0 +1,43 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); // Um grid de 12 colunas
+  grid-template-rows: auto;
+  gap: 2rem;
+  align-items: center;
+  min-height: 60vh;
+  animation: fade-in-up 1s $transition-smooth;
+}
+
+.title {
+  grid-column: 1 / 9; // Ocupa as primeiras 8 colunas
+  font-size: clamp(4rem, 12vw, 9rem); // Tipografia massiva e responsiva
+  font-weight: 800;
+  letter-spacing: -0.05em; // Kerning negativo para impacto
+  line-height: 0.9;
+  text-transform: uppercase;
+  // Permite que outros elementos fiquem por cima
+  z-index: 1;
+}
+
+.subtitle {
+  grid-column: 7 / 13; // Começa na coluna 7 e vai até o final
+  grid-row: 1; // Fica na mesma linha do título, criando sobreposição
+  text-align: right;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.6;
+  max-width: 35ch; // Limita a largura do texto
+  z-index: 2; // Fica na frente do título
+  justify-self: end; // Alinha à direita da sua célula do grid
+}
+
+.decorativeText {
+  grid-column: 1 / -1; // Ocupa toda a largura
+  grid-row: 2; // Fica na linha abaixo
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba($color-white, 0.5);
+}

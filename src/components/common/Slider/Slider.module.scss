@@ -1,0 +1,53 @@
+// src/components/common/Slider/Slider.module.scss
+@import '../../../styles/variables';
+
+.sliderContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-family: $font-main;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: rgba($color-white, 0.5);
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: rgba($color-white, 0.2);
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: $color-white;
+    border-radius: 50%;
+    transition: transform 0.2s $transition-smooth;
+  }
+
+  &:hover::-webkit-slider-thumb {
+    transform: scale(1.2);
+  }
+
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: $color-white;
+    border-radius: 50%;
+    border: none;
+    transition: transform 0.2s $transition-smooth;
+  }
+
+  &:hover::-moz-range-thumb {
+    transform: scale(1.2);
+  }
+}

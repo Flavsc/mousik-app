@@ -1,0 +1,41 @@
+// src/styles/_mixins.scss
+@import 'variables';
+
+// --- ANIMAÇÕES ---
+
+// Animação para o letreiro contínuo (Marquee/Ticker)
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+// Animação de entrada suave para elementos
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// --- MIXINS ---
+
+// Adiciona uma textura de ruído sutil.
+// Usamos um SVG embutido para não precisar de arquivos de imagem.
+@mixin apply-noise-texture($opacity: 0.04) {
+  &::before {
+    content: "";
+    position: fixed; // Fixo para cobrir toda a tela
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; // Permite que cliques passem através
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500"><filter id="noise"><feTurbulence baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
+    opacity: $opacity;
+    z-index: -1; // Coloca a textura atrás de todo o conteúdo
+  }
+}

@@ -1,12 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./components/layout/MainLayout/MainLayout";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import MainLayout from './components/layout/MainLayout/MainLayout';
 
 // Importação das páginas
-import Home from "./pages/Home/Home";
-import Studio from "./pages/Studio/Studio";
-import Gallery from "./pages/Gallery/Gallery";
-import About from "./pages/About/About";
-import Profile from "./pages/Profile/Profile";
+import Home from './pages/Home/Home';
+import Studio from './pages/Studio/Studio';
+import Gallery from './pages/Gallery/Gallery';
+import About from './pages/About/About';
+import Profile from './pages/Profile/Profile';
 
 function App() {
   return (

@@ -1,0 +1,17 @@
+// src/pages/Studio/components/TimeDisplay/TimeDisplay.module.scss
+@import '../../../../styles/variables';
+
+.timeDisplay {
+  font-family: $font-main;
+  font-size: 1rem;
+  color: $color-white;
+  background-color: darken($color-black, 4%);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  min-width: 120px;
+  text-align: center;
+
+  span:last-child {
+    color: rgba($color-white, 0.5);
+  }
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const Gallery: React.FC = () => {
   return (

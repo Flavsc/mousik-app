@@ -1,28 +1,36 @@
-@import "../../../styles/variables";
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
 
 .footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: $footer-height;
-  padding: 0 2rem;
-  background-color: $color-black;
-  border-top: 2px solid $color-concrete;
+  background-color: $color-white;
+  color: $color-black;
+  border-top: 1px solid rgba($color-white, 0.2);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-family: $font-brutalist-display;
+  z-index: 1000;
 }
 
-.links a {
-  margin-right: 1.5rem;
-  color: $color-concrete;
+.tickerWrapper {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap; // Impede a quebra de linha
+}
 
-  &:hover {
-    color: $color-white;
+.tickerContent {
+  display: inline-block;
+  // Animação de marquee
+  animation: marquee 40s linear infinite;
+
+  span {
+    font-family: $font-main;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding-right: 2rem; // Espaçamento entre as repetições
+    text-transform: uppercase;
   }
-}
-
-.signature {
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  color: $color-white;
 }
