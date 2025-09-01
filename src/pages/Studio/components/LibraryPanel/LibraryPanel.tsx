@@ -1,51 +1,24 @@
 // src/pages/Studio/components/LibraryPanel/LibraryPanel.tsx
-import React, { useRef } from 'react';
+import React from 'react';
 import styles from './LibraryPanel.module.scss';
-import type { AudioGraph } from '../Timeline/Timeline';
 
-// Definição dos nossos instrumentos
+// Usamos tipos de oscilador 'fat' que são compatíveis com o PolySynth.
 export const INSTRUMENTS = {
-  saw: { name: 'Saw Synth', type: 'sawtooth' },
-  sine: { name: 'Sine Synth', type: 'sine' },
-  square: { name: 'Square Synth', type: 'square' },
-} as const; // 'as const' para ter tipos mais estritos
+  saw: { name: 'Saw Synth', type: 'fatsawtooth' },
+  sine: { name: 'Sine Synth', type: 'fatsine' },
+  square: { name: 'Square Synth', type: 'fatsquare' },
+  drumkit: { name: 'Drum Kit', type: 'sampler' },
+} as const;
 
 export type InstrumentType = keyof typeof INSTRUMENTS;
 
 interface LibraryPanelProps {
-  onFileSelect: (file: File) => void;
-  onSynthSelect: (instrument: InstrumentType) => void;
-  audioGraph: AudioGraph | null;
+  onAddTrack: (instrument: InstrumentType) => void;
 }
 
-const LibraryPanel: React.FC<LibraryPanelProps> = ({ onFileSelect, onSynthSelect, audioGraph }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleUploadClick = () => fileInputRef.current?.click();
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) onFileSelect(file);
-  };
-
+const LibraryPanel: React.FC<LibraryPanelProps> = ({ onAddTrack }) => {
   return (
     <aside className={styles.libraryPanel}>
-      <div className={styles.header}>
-        <h3>Biblioteca</h3>
-      </div>
-      <div className={styles.actions}>
-        <button onClick={handleUploadClick} className={styles.uploadButton}>
-          Upload
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          style={{ display: 'none' }}
-          accept="audio/mp3, audio/wav"
-        />
-      </div>
-      
       <div className={styles.header}>
           <h3>Instrumentos</h3>
       </div>
@@ -53,11 +26,10 @@ const LibraryPanel: React.FC<LibraryPanelProps> = ({ onFileSelect, onSynthSelect
         {Object.entries(INSTRUMENTS).map(([key, { name }]) => (
           <button 
             key={key} 
-            onClick={() => onSynthSelect(key as InstrumentType)}
+            onClick={() => onAddTrack(key as InstrumentType)}
             className={styles.instrumentButton}
-            disabled={!audioGraph}
           >
-            {name}
+            + {name}
           </button>
         ))}
       </div>

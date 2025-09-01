@@ -1,99 +1,130 @@
 // src/pages/Studio/components/PianoRoll/PianoRoll.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './PianoRoll.module.scss';
-import type { AudioGraph } from '../Timeline/Timeline';
 import { INSTRUMENTS, type InstrumentType } from '../LibraryPanel/LibraryPanel';
+import { getInstrument } from '../../../../services/audioService';
+import * as Tone from 'tone';
+
+export type Track = {
+  id: number;
+  instrument: InstrumentType;
+  notes: Record<string, boolean>;
+};
 
 const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const OCTAVES = [5, 4, 3, 2];
 const NUM_STEPS = 16;
+const DRUM_MAP: Record<string, string> = { 'C3': 'kick', 'D3': 'snare', 'E3': 'hat' };
 
 interface PianoRollProps {
-  audioGraph: AudioGraph | null;
   isPlaying: boolean;
   bpm: number;
-  instrument: InstrumentType;
+  tracks: Track[];
+  activeTrackId: number | null;
+  onNotesChange: (trackId: number, newNotes: Record<string, boolean>) => void;
+  setActiveTrackId: (id: number | null) => void;
+  onRemoveTrack: (id: number) => void;
 }
 
-const PianoRoll: React.FC<PianoRollProps> = ({ audioGraph, isPlaying, bpm, instrument }) => {
-  const [activeNotes, setActiveNotes] = useState<Record<string, boolean>>({});
-  const [currentStep, setCurrentStep] = useState(0);
-  const intervalRef = useRef<number | null>(null);
+const PianoRoll: React.FC<PianoRollProps> = ({ isPlaying, bpm, tracks, activeTrackId, onNotesChange, setActiveTrackId, onRemoveTrack }) => {
+  const [currentStep, setCurrentStep] = useState(-1);
+  const loopRef = useRef<Tone.Sequence | null>(null);
+  const activeTrack = tracks.find(t => t.id === activeTrackId);
 
   useEffect(() => {
-    if (!audioGraph) return;
+    Tone.Transport.bpm.value = bpm;
     if (isPlaying) {
-      if (audioGraph.audioContext.state === 'suspended') audioGraph.audioContext.resume();
-      const timePerStep = (60 * 1000) / bpm / 4;
-      intervalRef.current = window.setInterval(() => {
-        setCurrentStep(prevStep => {
-          const nextStep = (prevStep + 1) % NUM_STEPS;
-          OCTAVES.forEach(octave =>
-            NOTES.forEach(note => {
-              const noteName = `${note}${octave}`;
-              if (activeNotes[`${noteName}-${nextStep}`]) {
-                playNote(noteName, audioGraph, instrument);
-              }
-            })
-          );
-          return nextStep;
+      loopRef.current = new Tone.Sequence((time, step) => {
+        Tone.Draw.schedule(() => setCurrentStep(step), time);
+        tracks.forEach(track => {
+          Object.keys(track.notes).forEach(noteId => {
+            const [noteName, noteStep] = noteId.split('-');
+            if (parseInt(noteStep) === step && track.notes[noteId]) {
+              const instrument = getInstrument(track.instrument);
+              instrument?.triggerAttackRelease(noteName, '8n', time);
+            }
+          });
         });
-      }, timePerStep);
+      }, Array.from({ length: NUM_STEPS }, (_, i) => i), '16n').start(0);
+
+      Tone.Transport.start();
     } else {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      setCurrentStep(0);
+      Tone.Transport.stop();
+      loopRef.current?.dispose();
+      setCurrentStep(-1);
     }
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      Tone.Transport.stop();
+      loopRef.current?.dispose();
     };
-  }, [isPlaying, activeNotes, audioGraph, bpm, instrument]);
+  }, [isPlaying, bpm, tracks]);
 
   const toggleNote = (noteName: string, step: number) => {
-    setActiveNotes(prev => ({ ...prev, [`${noteName}-${step}`]: !prev[`${noteName}-${step}`] }));
+    if (!activeTrack) return;
+    const id = `${noteName}-${step}`;
+    const newNotes = { ...activeTrack.notes, [id]: !activeTrack.notes[id] };
+    onNotesChange(activeTrack.id, newNotes);
   };
 
-  const playNote = (noteName: string, graph: AudioGraph, instr: InstrumentType) => {
-    const { audioContext, gainNode: destinationNode } = graph;
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
+  const clearAllNotes = () => {
+    if (!activeTrack) return;
+    onNotesChange(activeTrack.id, {});
+  };
 
-    const octave = parseInt(noteName.slice(-1));
-    const note = noteName.slice(0, -1);
-    const noteIndex = NOTES.indexOf(note);
-    const freq = 440 * Math.pow(2, (octave - 4) + (noteIndex - 9) / 12);
-    
-    oscillator.type = INSTRUMENTS[instr].type; // USA O INSTRUMENTO SELECIONADO
-    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+  const copyNotes = () => {
+    if (!activeTrack) return;
+    navigator.clipboard.writeText(JSON.stringify(activeTrack.notes));
+  };
 
-    oscillator.connect(gain);
-    gain.connect(destinationNode);
-
-    oscillator.start();
-    oscillator.stop(audioContext.currentTime + 0.5);
+  const pasteNotes = async () => {
+    if (!activeTrack) return;
+    try {
+      const text = await navigator.clipboard.readText();
+      const notes = JSON.parse(text);
+      onNotesChange(activeTrack.id, notes);
+    } catch (err) {
+      console.error("Falha ao colar notas:", err);
+    }
   };
 
   return (
     <div className={styles.pianoRollContainer}>
+      <div className={styles.toolbar}>
+        <div className={styles.trackSelector}>
+          {tracks.map(track => (
+            <div key={track.id} className={styles.trackTab}>
+              <button onClick={() => setActiveTrackId(track.id)} className={track.id === activeTrackId ? styles.activeTrack : ''}>
+                {INSTRUMENTS[track.instrument].name}
+              </button>
+              <button onClick={() => onRemoveTrack(track.id)} className={styles.removeTrackButton}>×</button>
+            </div>
+          ))}
+        </div>
+        <div className={styles.tools}>
+          <button onClick={copyNotes} disabled={!activeTrack}>Copiar</button>
+          <button onClick={pasteNotes} disabled={!activeTrack}>Colar</button>
+          <button onClick={clearAllNotes} disabled={!activeTrack}>Limpar</button>
+        </div>
+      </div>
       <div className={styles.grid}>
         {OCTAVES.flatMap(octave =>
           NOTES.map(note => {
             const noteName = `${note}${octave}`;
-            const isBlackKey = note.includes('#');
+            const isDrumKey = activeTrack?.instrument === 'drumkit' && DRUM_MAP[noteName];
+            if (activeTrack?.instrument === 'drumkit' && !isDrumKey) return null;
+
             return (
-              <div key={noteName} className={`${styles.row} ${isBlackKey ? styles.blackKeyRow : ''}`}>
-                <div className={styles.keyLabel}>{noteName}</div>
-                {Array.from({ length: NUM_STEPS }, (_, step) => {
-                  const id = `${noteName}-${step}`;
-                  return (
+              <div key={noteName} className={`${styles.row} ${note.includes('#') ? styles.blackKeyRow : ''}`}>
+                <div className={styles.keyLabel}>{isDrumKey ? DRUM_MAP[noteName] : noteName}</div>
+                <div className={styles.noteCells}>
+                  {Array.from({ length: NUM_STEPS }, (_, step) => (
                     <div
-                      key={id}
-                      className={`${styles.cell} ${activeNotes[id] ? styles.active : ''} ${currentStep === step ? styles.cursor : ''}`}
+                      key={`${noteName}-${step}`}
+                      className={`${styles.cell} ${activeTrack?.notes[`${noteName}-${step}`] ? styles.active : ''} ${currentStep === step ? styles.cursor : ''}`}
                       onClick={() => toggleNote(noteName, step)}
                     />
-                  );
-                })}
+                  ))}
+                </div>
               </div>
             );
           })

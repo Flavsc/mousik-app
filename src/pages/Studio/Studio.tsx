@@ -1,79 +1,89 @@
 // src/pages/Studio/Studio.tsx
 import React, { useState, useEffect } from 'react';
 import styles from './Studio.module.scss';
-import type WaveSurfer from 'wavesurfer.js';
-import { getAudioContext } from '../../services/audioService';
-import type { AudioGraph } from './components/Timeline/Timeline';
-import type { InstrumentType } from './components/LibraryPanel/LibraryPanel';
+import { type InstrumentType } from './components/LibraryPanel/LibraryPanel';
+import { type Track } from './components/PianoRoll/PianoRoll';
+import { preloadInstruments } from '../../services/audioService';
+import * as Tone from 'tone';
 
 import LibraryPanel from './components/LibraryPanel/LibraryPanel';
-import Timeline from './components/Timeline/Timeline';
 import TransportControls from './components/TransportControls/TransportControls';
 import EffectsPanel from './components/EffectsPanel/EffectsPanel';
 import PianoRoll from './components/PianoRoll/PianoRoll';
 
 const Studio: React.FC = () => {
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
-  const [audioGraph, setAudioGraph] = useState<AudioGraph | null>(null);
-  const [studioMode, setStudioMode] = useState<'audio' | 'synth'>('synth');
+  const [areInstrumentsLoaded, setAreInstrumentsLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [bpm, setBpm] = useState(120); // Estado do BPM
-  const [instrument, setInstrument] = useState<InstrumentType>('saw'); // Estado do Instrumento
+  const [bpm, setBpm] = useState(120);
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [activeTrackId, setActiveTrackId] = useState<number | null>(null);
 
   useEffect(() => {
-    const audioContext = getAudioContext();
-    const gainNode = audioContext.createGain();
-    const analyserNode = audioContext.createAnalyser();
-    gainNode.connect(analyserNode);
-    analyserNode.connect(audioContext.destination);
-    setAudioGraph({ audioContext, gainNode, analyserNode, sourceNode: null });
+    const startAudioAndLoad = async () => {
+      await Tone.start();
+      console.log("AudioContext do Tone.js iniciado");
+      preloadInstruments(() => {
+        setAreInstrumentsLoaded(true);
+      });
+    };
+    startAudioAndLoad();
   }, []);
 
-  const handleTimelineReady = (ws: WaveSurfer, sourceNode: MediaElementAudioSourceNode) => {
-    setWavesurfer(ws);
-    setAudioGraph(prev => prev ? { ...prev, sourceNode } : null);
+  const addTrack = (instrument: InstrumentType) => {
+    const newTrack: Track = { id: Date.now(), instrument, notes: {} };
+    setTracks(prev => [...prev, newTrack]);
+    setActiveTrackId(newTrack.id);
   };
 
-  const switchToAudioMode = (file: File) => {
-    if (isPlaying) setIsPlaying(false);
-    setAudioFile(file);
-    setStudioMode('audio');
+  const removeTrack = (trackId: number) => {
+    setTracks(prev => {
+      const remainingTracks = prev.filter(track => track.id !== trackId);
+      if (activeTrackId === trackId) {
+        setActiveTrackId(remainingTracks.length > 0 ? remainingTracks[0].id : null);
+      }
+      return remainingTracks;
+    });
   };
 
-  const switchToSynthMode = (instrument: InstrumentType) => {
-    if (isPlaying) setIsPlaying(false);
-    setInstrument(instrument);
-    setAudioFile(null);
-    wavesurfer?.empty();
-    setStudioMode('synth');
+  const updateTrackNotes = (trackId: number, newNotes: Record<string, boolean>) => {
+    setTracks(prev =>
+      prev.map(track =>
+        track.id === trackId ? { ...track, notes: newNotes } : track
+      )
+    );
   };
+
+  if (!areInstrumentsLoaded) {
+    return <div className={styles.loadingScreen}>A carregar instrumentos...</div>;
+  }
 
   return (
     <div className={styles.studioLayout}>
       <div className={styles.library}>
-        <LibraryPanel onFileSelect={switchToAudioMode} onSynthSelect={switchToSynthMode} audioGraph={audioGraph} />
+        <LibraryPanel onAddTrack={addTrack} />
       </div>
       <div className={styles.transport}>
         <TransportControls 
-          wavesurfer={wavesurfer} 
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
-          isSynthMode={studioMode === 'synth'}
-          audioGraph={audioGraph}
           bpm={bpm}
           onBpmChange={setBpm}
+          tracks={tracks}
         />
       </div>
       <div className={styles.timeline}>
-        {studioMode === 'audio' ? (
-          <Timeline audioFile={audioFile} audioGraph={audioGraph} onReady={handleTimelineReady} />
-        ) : (
-          <PianoRoll audioGraph={audioGraph} isPlaying={isPlaying} bpm={bpm} instrument={instrument} />
-        )}
+        <PianoRoll
+          isPlaying={isPlaying}
+          bpm={bpm}
+          tracks={tracks}
+          activeTrackId={activeTrackId}
+          onNotesChange={updateTrackNotes}
+          setActiveTrackId={setActiveTrackId}
+          onRemoveTrack={removeTrack}
+        />
       </div>
       <div className={styles.effects}>
-        <EffectsPanel audioGraph={audioGraph} />
+        <EffectsPanel />
       </div>
     </div>
   );

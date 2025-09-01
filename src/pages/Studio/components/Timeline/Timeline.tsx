@@ -2,14 +2,13 @@
 import React, { useEffect, useRef } from 'react';
 import styles from './Timeline.module.scss';
 import WaveSurfer from 'wavesurfer.js';
-// A importação de 'getAudioContext' foi removida daqui, pois não era utilizada.
 
-// A interface que exportamos permanece a mesma, mas sourceNode pode ser nulo
 export type AudioGraph = {
   audioContext: AudioContext;
   sourceNode: MediaElementAudioSourceNode | null;
   gainNode: GainNode;
   analyserNode: AnalyserNode;
+  effectsInput?: GainNode; // Propriedade opcional para o ponto de entrada dos efeitos
 };
 
 interface TimelineProps {
@@ -25,11 +24,9 @@ const Timeline: React.FC<TimelineProps> = ({ audioFile, audioGraph, onReady }) =
   useEffect(() => {
     if (!containerRef.current || !audioGraph) return;
 
-    const { audioContext } = audioGraph;
-
     const ws = WaveSurfer.create({
       container: containerRef.current,
-      waveColor: 'rgba(137, 156, 135, 0.5)', // Mantendo sua paleta de cores
+      waveColor: 'rgba(137, 156, 135, 0.5)',
       progressColor: '#899c87',
       barWidth: 2,
       barGap: 1,
@@ -42,13 +39,18 @@ const Timeline: React.FC<TimelineProps> = ({ audioFile, audioGraph, onReady }) =
     wavesurferRef.current = ws;
 
     ws.on('ready', () => {
-      const mediaElement = ws.getMediaElement();
-      const sourceNode = audioContext.createMediaElementSource(mediaElement);
-      
-      // Conecta esta fonte à cadeia de áudio principal que já existe
-      sourceNode.connect(audioGraph.gainNode);
+    if (!audioGraph) return;
+    const { audioContext, effectsInput } = audioGraph;
+    
+    const mediaElement = ws.getMediaElement();
+    const sourceNode = audioContext.createMediaElementSource(mediaElement);
+    
+    // Conecta a fonte de áudio diretamente ao PONTO DE ENTRADA DOS EFEITOS
+    if (effectsInput) {
+      sourceNode.connect(effectsInput);
+    }
 
-      onReady(ws, sourceNode);
+    onReady(ws, sourceNode);
     });
 
     return () => {

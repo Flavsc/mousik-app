@@ -8,12 +8,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem; // Aumenta o espaçamento
+  gap: 2rem;
   padding: 0 1rem;
 }
 
 .playButton {
-  background-color: $color-white; // Inverte o estilo para mais destaque
+  background-color: $color-white;
   border: none;
   color: $color-black;
   width: 45px;
@@ -65,8 +65,8 @@
     padding: 0.4rem;
     text-align: center;
     border-radius: 4px;
-    -moz-appearance: textfield; // Linha existente
-    appearance: textfield; // CORREÇÃO: Adicione esta linha
+    -moz-appearance: textfield;
+    appearance: textfield; /* CORREÇÃO AQUI */
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
@@ -74,4 +74,10 @@
       margin: 0;
     }
   }
+}
+
+.exportButton {
+  background-color: transparent;
+  border: 1px solid $color-white;
+  color: $color-white;
 }

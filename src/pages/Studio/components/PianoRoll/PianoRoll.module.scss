@@ -10,9 +10,88 @@
   flex-direction: column;
 }
 
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  background-color: darken($color-black, 4%);
+  border-bottom: 1px solid rgba($color-white, 0.2);
+  flex-shrink: 0;
+}
+
+.trackSelector {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.trackTab {
+  display: flex;
+  
+  button {
+    background-color: transparent;
+    border: 1px solid rgba($color-white, 0.2);
+    color: rgba($color-white, 0.6);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+  }
+  
+  .activeTrack {
+    background-color: $color-accent;
+    border-color: $color-accent;
+    color: $color-black;
+    font-weight: 700;
+  }
+
+  .removeTrackButton {
+    border-left: none;
+    padding: 0.4rem 0.6rem;
+    &:hover {
+      background-color: #ff3b30;
+      color: $color-white;
+      border-color: #ff3b30;
+    }
+  }
+
+  .loading {
+    cursor: not-allowed;
+    color: rgba($color-white, 0.4);
+    animation: pulse 1.5s infinite;
+  }
+}
+
+.tools {
+  display: flex;
+  padding: 0.5rem;
+  gap: 0.5rem;
+
+  button {
+    background-color: transparent;
+    border: 1px solid rgba($color-white, 0.2);
+    color: rgba($color-white, 0.6);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    &:hover {
+      background-color: rgba($color-white, 0.1);
+      color: $color-white;
+    }
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+}
+
 .grid {
   flex-grow: 1;
-  overflow-y: auto; // A barra de rolagem aparecerá aqui
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -21,33 +100,31 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgba($color-white, 0.05);
-  min-height: 25px; /* Garante uma altura mínima para cada linha de nota */
-}
-
-.blackKeyRow {
-  background-color: rgba($color-black, 0.3);
+  min-height: 25px;
 }
 
 .keyLabel {
   width: 60px;
-  padding: 0.5rem;
+  padding-right: 0.5rem;
   text-align: right;
   font-size: 0.7rem;
   color: rgba($color-white, 0.5);
   border-right: 1px solid rgba($color-white, 0.2);
-  flex-shrink: 0; /* Impede que o label diminua */
+  flex-shrink: 0;
+}
+
+.noteCells {
+  display: flex;
+  flex-grow: 1;
 }
 
 .cell {
-  flex: 1;
-  height: 25px; /* Altura fixa da célula */
+  flex: 1 0 0;
+  height: 25px;
   border-right: 1px solid rgba($color-white, 0.1);
   cursor: pointer;
   transition: background-color 0.1s ease;
-
-  &:hover {
-    background-color: rgba($color-white, 0.1);
-  }
+  &:hover { background-color: rgba($color-white, 0.1); }
 }
 
 .active {
@@ -58,4 +135,14 @@
 .cursor {
   background-color: rgba($color-white, 0.2);
   border: 1px solid $color-white;
+}
+
+.blackKeyRow {
+  background-color: rgba($color-black, 0.3);
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }

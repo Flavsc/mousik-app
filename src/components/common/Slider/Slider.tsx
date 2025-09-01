@@ -4,15 +4,16 @@ import styles from './Slider.module.scss';
 
 interface SliderProps {
   label: string;
-  value: number;
+  value?: number; // value agora é opcional
+  defaultValue?: number; // Nova prop
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   min?: number;
   max?: number;
   step?: number;
-  disabled?: boolean; // CORREÇÃO: Adicione a prop disabled
+  disabled?: boolean;
 }
 
-const Slider: React.FC<SliderProps> = ({ label, value, onChange, min = 0, max = 1, step = 0.01, disabled = false }) => {
+const Slider: React.FC<SliderProps> = ({ label, value, defaultValue, onChange, min = 0, max = 1, step = 0.01, disabled = false }) => {
   return (
     <div className={styles.sliderContainer}>
       <label className={styles.label}>{label}</label>
@@ -22,9 +23,10 @@ const Slider: React.FC<SliderProps> = ({ label, value, onChange, min = 0, max = 
         max={max}
         step={step}
         value={value}
+        defaultValue={defaultValue} // Adicionado aqui
         onChange={onChange}
         className={styles.slider}
-        disabled={disabled} // CORREÇÃO: Passe a prop para o input
+        disabled={disabled}
       />
     </div>
   );
