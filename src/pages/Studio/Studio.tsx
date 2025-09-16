@@ -8,12 +8,14 @@ import * as Tone from 'tone';
 
 import LibraryPanel from './components/LibraryPanel/LibraryPanel';
 import TransportControls from './components/TransportControls/TransportControls';
-import EffectsPanel from './components/EffectsPanel/EffectsPanel';
+import EffectsPanel, { effectsInput } from './components/EffectsPanel/EffectsPanel';
 import PianoRoll from './components/PianoRoll/PianoRoll';
+import Visualizer from './components/Visualizer/Visualizer';
 
 const Studio: React.FC = () => {
   const [areInstrumentsLoaded, setAreInstrumentsLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false); // Estado de gravação agora é centralizado
   const [bpm, setBpm] = useState(120);
   const [tracks, setTracks] = useState<Track[]>([]);
   const [activeTrackId, setActiveTrackId] = useState<number | null>(null);
@@ -22,7 +24,7 @@ const Studio: React.FC = () => {
     const startAudioAndLoad = async () => {
       await Tone.start();
       console.log("AudioContext do Tone.js iniciado");
-      preloadInstruments(() => {
+      preloadInstruments(effectsInput, () => {
         setAreInstrumentsLoaded(true);
       });
     };
@@ -63,17 +65,20 @@ const Studio: React.FC = () => {
         <LibraryPanel onAddTrack={addTrack} />
       </div>
       <div className={styles.transport}>
-        <TransportControls 
+        <TransportControls
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
+          isRecording={isRecording}
+          setIsRecording={setIsRecording}
           bpm={bpm}
           onBpmChange={setBpm}
           tracks={tracks}
         />
       </div>
-      <div className={styles.timeline}>
+      <div className={styles.pianoRoll}>
         <PianoRoll
           isPlaying={isPlaying}
+          isRecording={isRecording}
           bpm={bpm}
           tracks={tracks}
           activeTrackId={activeTrackId}
@@ -81,6 +86,9 @@ const Studio: React.FC = () => {
           setActiveTrackId={setActiveTrackId}
           onRemoveTrack={removeTrack}
         />
+      </div>
+      <div className={styles.visualizer}>
+        <Visualizer />
       </div>
       <div className={styles.effects}>
         <EffectsPanel />

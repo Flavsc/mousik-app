@@ -66,7 +66,7 @@
     text-align: center;
     border-radius: 4px;
     -moz-appearance: textfield;
-    appearance: textfield; /* CORREÇÃO AQUI */
+    appearance: textfield;
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
@@ -80,4 +80,34 @@
   background-color: transparent;
   border: 1px solid $color-white;
   color: $color-white;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s $transition-smooth;
+
+  &:hover {
+    background-color: $color-white;
+    color: $color-black;
+  }
+
+  &.recording {
+    background-color: #ff3b30; // Cor de destaque para gravação
+    border-color: #ff3b30;
+    color: $color-white;
+    animation: pulse-rec 1.5s infinite;
+    cursor: not-allowed;
+  }
+}
+
+@keyframes pulse-rec {
+  0% {
+    box-shadow: 0 0 0 0 rgba(#ff3b30, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(#ff3b30, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(#ff3b30, 0);
+  }
 }

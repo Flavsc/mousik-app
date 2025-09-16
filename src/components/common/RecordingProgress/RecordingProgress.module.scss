@@ -1,0 +1,52 @@
+// src/components/common/RecordingProgress/RecordingProgress.module.scss
+@import '../../../styles/variables';
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color-black, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; // Garante que fique por cima de tudo
+  backdrop-filter: blur(5px);
+}
+
+.popup {
+  background-color: $color-black;
+  padding: 2rem 3rem;
+  border: 1px solid rgba($color-white, 0.2);
+  text-align: center;
+  width: 400px;
+
+  h3 {
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: rgba($color-white, 0.8);
+  }
+
+  p {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: $color-white;
+  }
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 8px;
+  background-color: darken($color-black, 4%);
+  border: 1px solid rgba($color-white, 0.1);
+}
+
+.progressBar {
+  height: 100%;
+  background-color: $color-white;
+  transition: width 0.1s linear; // Transição suave para a barra
+}

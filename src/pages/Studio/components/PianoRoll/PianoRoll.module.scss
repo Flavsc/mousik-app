@@ -27,7 +27,7 @@
 
 .trackTab {
   display: flex;
-  
+
   button {
     background-color: transparent;
     border: 1px solid rgba($color-white, 0.2);
@@ -39,7 +39,7 @@
     text-transform: uppercase;
     transition: all 0.2s ease;
   }
-  
+
   .activeTrack {
     background-color: $color-accent;
     border-color: $color-accent;
@@ -94,6 +94,20 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: darken($color-black, 4%);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba($color-white, 0.5);
+    border-radius: 6px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: $color-white;
+  }
 }
 
 .row {

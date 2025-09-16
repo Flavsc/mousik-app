@@ -2,12 +2,14 @@
 import React from 'react';
 import styles from './LibraryPanel.module.scss';
 
-// Usamos tipos de oscilador 'fat' que são compatíveis com o PolySynth.
 export const INSTRUMENTS = {
-  saw: { name: 'Saw Synth', type: 'fatsawtooth' },
-  sine: { name: 'Sine Synth', type: 'fatsine' },
-  square: { name: 'Square Synth', type: 'fatsquare' },
-  drumkit: { name: 'Drum Kit', type: 'sampler' },
+  saw: { name: 'Sintetizador Clássico', type: 'polysynth' },
+  sine: { name: 'Sintetizador Etéreo', type: 'polysynth' },
+  square: { name: 'Sintetizador 8-bit', type: 'polysynth' },
+  bass: { name: 'Baixo Sintetizado', type: 'monosynth' },
+  guitar: { name: 'Arpejo de Cordas', type: 'pluck' },
+  lead: { name: 'Solo Melódico', type: 'fmsynth' },
+  drumkit: { name: 'Bateria', type: 'sampler' },
 } as const;
 
 export type InstrumentType = keyof typeof INSTRUMENTS;
@@ -24,8 +26,8 @@ const LibraryPanel: React.FC<LibraryPanelProps> = ({ onAddTrack }) => {
       </div>
       <div className={styles.instrumentList}>
         {Object.entries(INSTRUMENTS).map(([key, { name }]) => (
-          <button 
-            key={key} 
+          <button
+            key={key}
             onClick={() => onAddTrack(key as InstrumentType)}
             className={styles.instrumentButton}
           >

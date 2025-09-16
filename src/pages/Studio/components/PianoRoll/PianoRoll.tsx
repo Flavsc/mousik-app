@@ -13,11 +13,12 @@ export type Track = {
 
 const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const OCTAVES = [5, 4, 3, 2];
-const NUM_STEPS = 16;
+const NUM_STEPS = 32;
 const DRUM_MAP: Record<string, string> = { 'C3': 'kick', 'D3': 'snare', 'E3': 'hat' };
 
 interface PianoRollProps {
   isPlaying: boolean;
+  isRecording: boolean;
   bpm: number;
   tracks: Track[];
   activeTrackId: number | null;
@@ -26,38 +27,61 @@ interface PianoRollProps {
   onRemoveTrack: (id: number) => void;
 }
 
-const PianoRoll: React.FC<PianoRollProps> = ({ isPlaying, bpm, tracks, activeTrackId, onNotesChange, setActiveTrackId, onRemoveTrack }) => {
+const PianoRoll: React.FC<PianoRollProps> = ({ isPlaying, isRecording, bpm, tracks, activeTrackId, onNotesChange, setActiveTrackId, onRemoveTrack }) => {
   const [currentStep, setCurrentStep] = useState(-1);
   const loopRef = useRef<Tone.Sequence | null>(null);
   const activeTrack = tracks.find(t => t.id === activeTrackId);
 
   useEffect(() => {
     Tone.Transport.bpm.value = bpm;
+    loopRef.current?.dispose();
+
     if (isPlaying) {
       loopRef.current = new Tone.Sequence((time, step) => {
         Tone.Draw.schedule(() => setCurrentStep(step), time);
+
         tracks.forEach(track => {
+          const notesToPlay: string[] = [];
           Object.keys(track.notes).forEach(noteId => {
             const [noteName, noteStep] = noteId.split('-');
             if (parseInt(noteStep) === step && track.notes[noteId]) {
-              const instrument = getInstrument(track.instrument);
-              instrument?.triggerAttackRelease(noteName, '8n', time);
+              notesToPlay.push(noteName);
             }
           });
-        });
-      }, Array.from({ length: NUM_STEPS }, (_, i) => i), '16n').start(0);
 
-      Tone.Transport.start();
+          if (notesToPlay.length > 0) {
+            const instrument = getInstrument(track.instrument);
+            const instrumentInfo = INSTRUMENTS[track.instrument];
+            const isMonophonic = ['monosynth', 'pluck', 'fmsynth'].includes(instrumentInfo.type);
+
+            if (isMonophonic) {
+              instrument?.triggerAttackRelease(notesToPlay[notesToPlay.length - 1], '8n', time);
+            } else {
+              instrument?.triggerAttackRelease(notesToPlay, '8n', time);
+            }
+          }
+        });
+      }, Array.from({ length: NUM_STEPS }, (_, i) => i), '16n');
+      
+      loopRef.current.loop = !isRecording;
+      
+      loopRef.current.start(0);
+      
+      if (Tone.Transport.state !== 'started') {
+        Tone.Transport.position = 0;
+        Tone.Transport.start();
+      }
     } else {
       Tone.Transport.stop();
-      loopRef.current?.dispose();
       setCurrentStep(-1);
     }
+
     return () => {
       Tone.Transport.stop();
       loopRef.current?.dispose();
     };
-  }, [isPlaying, bpm, tracks]);
+  }, [isPlaying, isRecording, bpm, tracks]);
+
 
   const toggleNote = (noteName: string, step: number) => {
     if (!activeTrack) return;

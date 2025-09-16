@@ -1,15 +1,15 @@
 // src/pages/Studio/components/EffectsPanel/EffectsPanel.tsx
-import React, { useState, useEffect } from 'react'; // useRef removido
+import React, { useState, useEffect } from 'react';
 import styles from './EffectsPanel.module.scss';
 import Slider from '../../../../components/common/Slider/Slider';
 import * as Tone from 'tone';
 
-// Nós de efeitos globais do Tone.js, conectados à saída principal
+// A cadeia de efeitos é criada e o último nó conecta-se diretamente à saída de áudio principal.
 const filter = new Tone.Filter(20000, "lowpass").toDestination();
 const distortion = new Tone.Distortion(0).connect(filter);
 const reverb = new Tone.Reverb({ decay: 1.5, wet: 0 }).connect(distortion);
 
-// O ponto de entrada para todos os sons agora se conecta ao reverb (o início da cadeia de efeitos)
+// Este continua a ser o ponto de entrada para todos os instrumentos.
 export const effectsInput = new Tone.Channel().connect(reverb);
 
 const EffectsPanel: React.FC = () => {
